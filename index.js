@@ -1,27 +1,35 @@
 const mineflayer = require('mineflayer');
 
-const bot = mineflayer.createBot({
-  host: 'barvazimmm.aternos.me',
-  port: 14658,
-  version: '1.20.4',
-  username: 'pizza247',
-  auth: 'offline'
-});
+function createBot() {
+  const bot = mineflayer.createBot({
+    host: 'barvazimmm.aternos.me',   // כתובת השרת
+    port: 14658,                     // פורט
+    version: '1.20.4',               // גרסת מיינקרפט
+    username: 'pizza247',            // שם הבוט
+    auth: 'offline'                  // התחברות ללא פרימיום
+  });
 
-bot.on('spawn', () => {
-  console.log('✅ הבוט התחבר לשרת!');
+  bot.on('spawn', () => {
+    console.log('✅ הבוט התחבר לשרת!');
+    
+    // לגרום לבוט ללכת קדימה
+    bot.setControlState('forward', true);
 
-  bot.setControlState('forward', true); // הולך קדימה
+    // אחרי 5 שניות שולח את הסיסמה
+    setTimeout(() => {
+      bot.chat('/login @@##$$');  // שים פה את הסיסמה האמיתית שלך
+    }, 5000);
+  });
 
-  setTimeout(() => {
-    bot.chat('/login @@##$$'); // שולח את הסיסמה
-  }, 5000);
-});
+  bot.on('error', (err) => {
+    console.log('❌ שגיאה בבוט:', err);
+  });
 
-bot.on('error', (err) => {
-  console.log('❌ שגיאה בבוט:', err);
-});
+  bot.on('end', () => {
+    console.log('⚡ הבוט התנתק! מנסה להתחבר שוב בעוד 5 שניות...');
+    setTimeout(createBot, 5000); // מנסה להתחבר מחדש
+  });
+}
 
-bot.on('end', () => {
-  console.log('⚠️ הבוט התנתק מהשרת');
-});
+// מתחיל להפעיל את הבוט
+createBot();
